@@ -5,7 +5,9 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/ELBARGUIMOHAMED/mysite.git'
+                git branch: 'main',
+                    credentialsId: 'github-ssh',
+                    url: 'git@github.com:ELBARGUIMOHAMED/mysite.git'
             }
         }
 
@@ -15,17 +17,13 @@ pipeline {
             }
         }
 
-        stage('Deploy to Server') {
+        stage('Run Container') {
             steps {
-                sshagent(['aws-ssh-key']) {
-                    sh '''
-                    ssh -o StrictHostKeyChecking=no ubuntu@44.211.239.155 '
-                        docker stop mysite || true &&
-                        docker rm mysite || true &&
-                        docker run -d -p 80:80 --name mysite mysite
-                    '
-                    '''
-                }
+                sh '''
+                    docker stop mysite || true
+                    docker rm mysite || true
+                    docker run -d -p 80:80 --name mysite mysite
+                '''
             }
         }
     }
