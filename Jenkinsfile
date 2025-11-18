@@ -1,13 +1,16 @@
 pipeline {
     agent any
 
-    stages {
+    triggers {
+        githubPush()
+    }
 
+    stages {
         stage('Checkout') {
             steps {
                 git branch: 'main',
-                    credentialsId: 'github-ssh',
-                    url: 'git@github.com:ELBARGUIMOHAMED/mysite.git'
+                credentialsId: 'github-ssh',
+                url: 'git@github.com:ELBARGUIMOHAMED/mysite.git'
             }
         }
 
@@ -20,9 +23,9 @@ pipeline {
         stage('Run Container') {
             steps {
                 sh '''
-                    docker stop mysite || true
-                    docker rm mysite || true
-                    docker run -d -p 80:80 --name mysite mysite
+                docker stop mysite || true
+                docker rm mysite || true
+                docker run -d -p 80:80 --name mysite mysite
                 '''
             }
         }
