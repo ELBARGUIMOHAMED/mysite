@@ -7,89 +7,77 @@
 ![Nginx](https://img.shields.io/badge/Reverse_Proxy-Nginx-green?style=for-the-badge&logo=nginx)
 
 > **Author:** Mohamed Elbargui | **Year:** 2025  
-> **Project Type:** DevOps Case Study
+> **Project Type:** Full DevOps Case Study & Implementation
+
+---
+
+## 📄 Documentation & Proof of Work
+This project is fully documented with **architecture diagrams, configuration logs, and deployment verification screenshots**.
+
+### 👉 [Click Here to View the Full Case Study (PDF)](./DevOps-Case-Study.pdf)
+*(Please ensure the PDF file is named `DevOps-Case-Study.pdf` in your repo)*
 
 ---
 
 ## 📖 Project Overview
-This project demonstrates a production-ready **CI/CD Pipeline** deployed on **AWS**.  
-It automates the deployment of a web application using **Jenkins**, containerizes it with **Docker**, and serves it securely using **Nginx as a Reverse Proxy** with HTTPS support.
+This repository contains the configuration and implementation details of a production-ready **CI/CD Pipeline deployed on AWS**.
 
-The goal was to simulate a real-world DevOps environment where code changes are automatically built, tested, and deployed to a production server without manual intervention.
-
----
-
-## 🏗️ Architecture
-The infrastructure consists of **3 AWS EC2 Instances** (Ubuntu 24.04) configured with specific Security Groups and Roles:
-
-| Server Name | Role | Ports Open |
-|-------------|------|------------|
-| **Jenkins Server** | CI/CD Orchestrator | `8080` (UI), `22` (SSH), `80` (Webhooks) |
-| **Production Server** | Hosting App (Docker + Nginx) | `80` (HTTP), `443` (HTTPS), `22` (SSH) |
-| **Tools/Webhook Node** | Helper & Trigger Handling | `22`, `80` |
-
-### 🖼️ Architecture Diagram
-*(Place your architecture diagram screenshot here - e.g., from Page 2)*
-![Architecture Diagram](./screenshots/architecture.png)
+I automated the entire software delivery process: starting from a **Git Push**, passing through **Jenkins** for automation, containerizing the application with **Docker**, and finally deploying it to a Production Server behind an **Nginx Reverse Proxy** secured with **HTTPS**.
 
 ---
 
-## ⚙️ Tech Stack & Tools
-*   **Cloud Provider:** AWS (EC2, Security Groups, IAM).
-*   **CI/CD:** Jenkins (Automated Pipelines).
-*   **Containerization:** Docker (Images & Containers).
-*   **Web Server:** Nginx (Reverse Proxy & SSL Termination).
-*   **Version Control:** GitHub (Webhooks for Triggers).
-*   **OS:** Linux Ubuntu 24.04 LTS.
-*   **Security:** SSH Keys, SSL Certificates, Firewall Rules.
+## 🏗️ Architecture & Infrastructure
+The project infrastructure consists of **3 AWS EC2 Instances** (running Ubuntu 24.04), communicating securely via SSH and private networking.
+
+| Server Role | Description | Key Services |
+|:---:|---|---|
+| **Jenkins Node** | The Orchestrator. Handles Webhooks, Builds, and Remote Deployments. | `Jenkins (Port 8080)`, `Java` |
+| **Production Node** | The Live Server. Hosts the Dockerized Application. | `Docker`, `Nginx (Reverse Proxy)`, `SSL` |
+| **Webhook/Tools Node** | Handles external triggers and utility operations. | `Webhook Listener`, `Git` |
 
 ---
 
-## 🔄 The CI/CD Flow
-Every time code is pushed to the `main` branch, the following automated steps occur:
+## 🔄 The CI/CD Workflow (Pipeline)
+The pipeline is fully automated. Here is the lifecycle of a deployment:
 
-1.  **Trigger:** GitHub Webhook detects the push and notifies Jenkins.
-2.  **Checkout:** Jenkins pulls the latest code from the repository.
-3.  **Build:** Jenkins processes the application files.
-4.  **Dockerize:** A new Docker image is built for the application.
-5.  **Deploy:**
-    *   The image is deployed to the **Production Server**.
-    *   The old container is stopped/removed.
-    *   The new container runs on Port `8080`.
-6.  **Serve:** Nginx receives traffic on Port `80/443` and proxies it to the Docker container.
-
-### 🖼️ Pipeline Visualization
-*(Place the Pipeline Diagram screenshot here - from Page 3)*
-![Pipeline Flow](./screenshots/pipeline-flow.png)
+1.  **Code Commit:** Developer pushes code to the `main` branch.
+2.  **Trigger:** GitHub Webhook detects the event and wakes up Jenkins.
+3.  **Build & Test:** Jenkins pulls the code and validates configurations.
+4.  **Containerization:** A Docker Image is built from the source code.
+5.  **Deployment:**
+    *   Jenkins SSHs into the Production Server.
+    *   Stops and removes the old container.
+    *   Spins up the new container on port `8080`.
+6.  **Exposure:** **Nginx** acts as a Reverse Proxy, receiving traffic on Ports `80/443` and forwarding it to the Docker container.
 
 ---
 
-## 🛠️ Implementation Details
+## 🛠️ Key Technical Implementations
+### 1. Security & Networking
+*   Configured **AWS Security Groups** to strictly limit access (SSH only for admins, HTTP/HTTPS for public).
+*   Implemented **SSH Key-based authentication** between Jenkins and Production servers.
 
-### 1. Infrastructure Setup (AWS)
-*   Provisioned 3 EC2 instances using **Ubuntu 24.04**.
-*   Configured **Security Groups** to allow SSH access and Web Traffic.
-*   Assigned Elastic IPs for static access.
+### 2. Nginx Reverse Proxy
+*   Used Nginx to act as a shield for the application container.
+*   Configured **SSL Certificates** manually to enable secure HTTPS access.
 
-### 2. Jenkins Configuration
-*   Installed Jenkins on the dedicated CI server.
-*   Configured **GitHub Webhooks** to trigger builds automatically.
-*   Set up **SSH Agent** to allow Jenkins to deploy artifacts to the Production Server remotely.
+### 3. Process Management
+*   Used `systemd` to manage Jenkins and Nginx services, ensuring high availability and auto-restart on failure.
 
-### 3. Nginx Reverse Proxy & SSL
-*   Configured Nginx to listen on ports `80` and `443`.
-*   Set up a **Reverse Proxy** to forward traffic to the Docker container.
-*   Implemented **SSL Certificates** for secure HTTPS communication.
+---
 
-```nginx
-# Sample Nginx Config Used
-server {
-    listen 443 ssl http2;
-    server_name _;
-    ssl_certificate /etc/ssl/certs/mycert.crt;
-    ssl_certificate_key /etc/ssl/private/mykey.key;
+## 🔮 Future Roadmap
+As outlined in the Case Study conclusion, the next version of this project will introduce:
+- [ ] **Infrastructure as Code:** Migrating manual EC2 creation to **Terraform**.
+- [ ] **Orchestration:** Moving from Docker to **Kubernetes (K8s)** cluster.
+- [ ] **Monitoring:** Adding **Prometheus & Grafana** dashboards.
+- [ ] **SSL Automation:** Using **Certbot (Let's Encrypt)** for auto-renewal.
 
-    location / {
-        proxy_pass http://localhost:8080;
-    }
-}
+---
+
+## 👤 Author
+**Mohamed Elbargui**  
+*Junior DevOps Engineer | Cloud & Automation Enthusiast*
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue?style=for-the-badge&logo=linkedin)](https://www.linkedin.com/in/mohamed-elbargui-226613252)
+[![Portfolio](https://img.shields.io/badge/Portfolio-Visit-orange?style=for-the-badge&logo=html5)](https://elbarguimohamed.github.io/Portfolio/)
