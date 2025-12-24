@@ -15,7 +15,6 @@
 This project is fully documented with **architecture diagrams, configuration logs, and deployment verification screenshots**.
 
 ### 👉 [Click Here to View the Full Case Study (PDF)](./DevOps-Case-Study.pdf)
-*(Please ensure the PDF file is named `DevOps-Case-Study.pdf` in your repo)*
 
 ---
 
